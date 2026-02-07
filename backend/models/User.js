@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// NEW (works with Mongoose 6+)
+// new (works with Mongoose 6+)
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(10);
