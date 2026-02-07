@@ -1,24 +1,26 @@
-import user from "../models/User";
-import jwt from 'jsonwebtoken';
+import User from "../models/User.js";
+import jwt from "jsonwebtoken";
 
+export const protect = async (req, res, next) => {
+  let token;
 
-export const protect = async (requestAnimationFrame, resizeBy, next) => {
-    let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    try {
+      token = req.headers.authorization.split(" ")[1];
 
-    if(req.headers.authorization && req.headers.authorization.startsWith("Bearer")){
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        try {
-            token = req.headers.authorization.split(" ")[1];
+      req.user = await User.findById(decoded.id).select("-password");
 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-            req.user = await user.findById(decoded.id).select("-password");
-
-            return next();
-        } catch (err) {
-
-            console.error("Token verification ")
-            
-        }
+      return next();
+    } catch (err) {
+      console.error("Token verification failed: ", err.message);
+      return res.status(401).json({ message: "Not authorized, token failed" });
     }
-}
+  }
+  return res.status(401).json({ message: "Not authorized, token failed" });
+  
+};
