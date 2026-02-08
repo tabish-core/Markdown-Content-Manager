@@ -8,19 +8,18 @@ const Login = ({ setUser }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
- const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
   try {
+    // Ensure the URL is exactly "/api/users/login"
     const { data } = await axios.post("/api/users/login", {
       email,
       password,
     });
-    // data is { token, user: {...} }
     localStorage.setItem("token", data.token);
-    setUser(data.user); // Focus on the user object here
+    setUser(data.user);
     navigate("/");
   } catch (error) {
-    // This will now show the actual Supabase error (e.g., "Invalid login credentials")
     setError(error.response?.data?.message || "Server error");
   }
 };
