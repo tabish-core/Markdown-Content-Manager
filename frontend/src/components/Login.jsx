@@ -8,21 +8,22 @@ const Login = ({ setUser }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const { data } = await axios.post("/api/users/login", {
-        email,
-        password,
-      });
-      localStorage.setItem("token", data.token);
-      setUser(data);
-      navigate("/");
-    } catch (error) {
-      setError(error.response?.data?.message || "Server error");
-    }
-  };
-
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const { data } = await axios.post("/api/users/login", {
+      email,
+      password,
+    });
+    // data is { token, user: {...} }
+    localStorage.setItem("token", data.token);
+    setUser(data.user); // Focus on the user object here
+    navigate("/");
+  } catch (error) {
+    // This will now show the actual Supabase error (e.g., "Invalid login credentials")
+    setError(error.response?.data?.message || "Server error");
+  }
+};
   // Login.jsx (Apply similar logic to Register.jsx)
 return (
   <div className="min-h-[80vh] flex items-center justify-center px-6">
