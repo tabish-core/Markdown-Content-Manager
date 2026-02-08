@@ -12,7 +12,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   try {
     // Ensure the URL is exactly "/api/users/login"
-    const { data } = await axios.post("/api/users/login", {
+    const { data } = await axios.post("/users/login", {
       email,
       password,
     });
