@@ -30,7 +30,6 @@
 //   console.log(`Server started at port ${PORT}`);
 // });
 
-
 import express from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
@@ -41,19 +40,22 @@ import cors from "cors";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5000;
 const app = express();
+const __dirname = path.resolve();
 
-app.use(cors()); 
+app.use(cors());
 app.use(express.json());
 
+// API Routes
 app.use("/api/users", authRoutes);
 app.use("/api/notes", notesRoutes);
 
-const __dirname = path.resolve();
 
+// Production Configuration
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+  // SPA fallback
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
   });
@@ -61,7 +63,6 @@ if (process.env.NODE_ENV === "production") {
 
 connectDB();
 
-// At the bottom of server.js, replace your app.listen with this:
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
