@@ -4,7 +4,7 @@ import NoteModal from "./NoteModal";
 import { useLocation } from "react-router-dom";
 
 const Home = () => {
-  
+
   const [notes, setNotes] = useState([]);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,7 +15,8 @@ const Home = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Good morning";
     if (hour < 18) return "Good afternoon";
-    return "Good evening";}
+    return "Good evening";
+  }
 
 
   const fetchNotes = async () => {
@@ -32,10 +33,10 @@ const Home = () => {
       });
       const filteredNotes = search
         ? data.filter(
-            (note) =>
-              note.title.toLowerCase().includes(search.toLowerCase()) ||
-              note.description.toLowerCase().includes(search.toLowerCase())
-          )
+          (note) =>
+            note.title.toLowerCase().includes(search.toLowerCase()) ||
+            note.content.toLowerCase().includes(search.toLowerCase())
+        )
         : data;
       setNotes(filteredNotes);
       console.log(data);
@@ -55,7 +56,7 @@ const Home = () => {
   const handleSaveNote = (newNote) => {
     if (editNote) {
       setNotes(
-        notes.map((note) => (note._id === newNote._id ? newNote : note))
+        notes.map((note) => (note.id === newNote.id ? newNote : note))
       );
     } else {
       setNotes([...notes, newNote]);
@@ -74,84 +75,84 @@ const Home = () => {
       await axios.delete(`/api/notes/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setNotes(notes.filter((note) => note._id !== id));
+      setNotes(notes.filter((note) => note.id !== id));
     } catch (err) {
       setError("Failed to delete note");
     }
-    
+
   };
 
   return (
-  <div className="min-h-screen bg-[#FDFCF8] text-[#2C2C2C] selection:bg-[#EAE0D5]">
-    <div className="container mx-auto px-6 py-12">
-      
-      {/* Header Section */}
-      <div className="flex justify-between items-end mb-10">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight">My Workspace</h1>
-          <p className="text-[#726D6A] text-sm mt-1">Organize your thoughts in markdown.</p>
+    <div className="min-h-screen bg-[#FDFCF8] text-[#2C2C2C] selection:bg-[#EAE0D5]">
+      <div className="container mx-auto px-6 py-12">
+
+        {/* Header Section */}
+        <div className="flex justify-between items-end mb-10">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight">My Workspace</h1>
+            <p className="text-[#726D6A] text-sm mt-1">Organize your thoughts in markdown.</p>
+          </div>
+          {error && <p className="text-red-500 text-sm animate-pulse">{error}</p>}
         </div>
-        {error && <p className="text-red-500 text-sm animate-pulse">{error}</p>}
-      </div>
 
-      <NoteModal
-        isOpen={isModalOpen}
-        onClose={() => { setIsModalOpen(false); setEditNote(null); }}
-        note={editNote}
-        onSave={handleSaveNote}
-      />
+        <NoteModal
+          isOpen={isModalOpen}
+          onClose={() => { setIsModalOpen(false); setEditNote(null); }}
+          note={editNote}
+          onSave={handleSaveNote}
+        />
 
-      {/* Floating Action Button - Modernized */}
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="fixed bottom-10 right-10 w-16 h-16 bg-[#2C2C2C] text-[#FDFCF8] rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center z-50 group"
-      >
-        <span className="text-3xl font-light group-hover:rotate-90 transition-transform duration-300">+</span>
-      </button>
+        {/* Floating Action Button - Modernized */}
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="fixed bottom-10 right-10 w-16 h-16 bg-[#2C2C2C] text-[#FDFCF8] rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center z-50 group"
+        >
+          <span className="text-3xl font-light group-hover:rotate-90 transition-transform duration-300">+</span>
+        </button>
 
-      {/* Notes Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {notes.map((note) => (
-          <div 
-            key={note._id}
-            className="group bg-white border border-[#EAE0D5] p-6 rounded-[24px] hover:shadow-lg hover:border-[#D6CCC2] transition-all duration-300 flex flex-col h-64"
-          >
-            <div className="flex-1">
-              
-<h3 className="text-xl font-medium text-[#2C2C2C] mb-3 group-hover:opacity-80 transition-opacity">
-  {note.title}
-</h3>
-              <p className="text-[#5E5E5E] line-clamp-3 text-sm leading-relaxed">
-                {note.description}
-              </p>
-            </div>
+        {/* Notes Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {notes.map((note) => (
+            <div
+              key={note.id}
+              className="group bg-white border border-[#EAE0D5] p-6 rounded-[24px] hover:shadow-lg hover:border-[#D6CCC2] transition-all duration-300 flex flex-col h-64"
+            >
+              <div className="flex-1">
 
-            <div className="mt-4 flex items-center justify-between">
-              <span className="text-[10px] uppercase tracking-widest text-[#A8A29E] font-bold">
-                {new Date(note.updatedAt).toLocaleDateString()}
-              </span>
-              
-              <div className="flex space-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button
-                  onClick={() => handleEdit(note)}
-                  className="text-sm font-semibold text-[#726D6A] hover:text-[#1A1A1A]"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(note._id)}
-                  className="text-sm font-semibold text-red-400 hover:text-red-600"
-                >
-                  Delete
-                </button>
+                <h3 className="text-xl font-medium text-[#2C2C2C] mb-3 group-hover:opacity-80 transition-opacity">
+                  {note.title}
+                </h3>
+                <p className="text-[#5E5E5E] line-clamp-3 text-sm leading-relaxed">
+                  {note.content}
+                </p>
+              </div>
+
+              <div className="mt-4 flex items-center justify-between">
+                <span className="text-[10px] uppercase tracking-widest text-[#A8A29E] font-bold">
+                  {new Date(note.created_at).toLocaleDateString()}
+                </span>
+
+                <div className="flex space-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <button
+                    onClick={() => handleEdit(note)}
+                    className="text-sm font-semibold text-[#726D6A] hover:text-[#1A1A1A]"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(note.id)}
+                    className="text-sm font-semibold text-red-400 hover:text-red-600"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
   //   <div className="container mx-auto px-4 py-8 min-h-screen bg-gray-500">
   //     {error && <p className="text-red-400 mb-4">{error}</p>}
   //     <NoteModal
@@ -199,7 +200,7 @@ const Home = () => {
   //       ))}
   //     </div>
   //   </div>
-  
+
 };
 
 export default Home;
