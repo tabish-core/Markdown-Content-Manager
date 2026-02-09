@@ -3,28 +3,28 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
 const Register = ({ setUser }) => {
-  const [username, setUsername] = useState("");
+  const [username, setusername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    // Ensure the URL is exactly "/api/users/register"
-    const { data } = await axios.post("/users/register", {
-      username,
-      email,
-      password,
-    });
-    localStorage.setItem("token", data.token);
-    setUser(data);
-    navigate("/");
-  } catch (error) {
-    setError(error.response?.data?.message || "Server error");
-  }
-};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Ensure the URL is exactly "/api/users/register"
+      const { data } = await axios.post("/api/users/register", {
+        username,
+        email,
+        password,
+      });
+      localStorage.setItem("token", data.token);
+      setUser(data);
+      navigate("/");
+    } catch (error) {
+      setError(error.response?.data?.message || "Server error");
+    }
+  };
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-6 bg-[#FDFCF8]">
@@ -33,7 +33,7 @@ const handleSubmit = async (e) => {
           <h2 className="text-3xl font-bold text-[#2C2C2C]">Welcome</h2>
           <p className="text-[#726D6A] mt-2">Start capturing your thoughts today.</p>
         </div>
-        
+
         {error && (
           <div className="mb-6 p-3 bg-red-50 text-red-500 text-sm rounded-xl text-center border border-red-100">
             {error}
@@ -44,8 +44,8 @@ const handleSubmit = async (e) => {
           <input
             type="text"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username"
+            onChange={(e) => setusername(e.target.value)}
+            placeholder="username"
             className="w-full px-6 py-4 bg-[#FDFCF8] border border-[#EAE0D5] rounded-2xl outline-none focus:ring-2 focus:ring-[#D6CCC2] transition-all placeholder:text-[#A8A29E]"
             required
           />
@@ -69,7 +69,7 @@ const handleSubmit = async (e) => {
             Create Account
           </button>
         </form>
-        
+
         <p className="mt-8 text-center text-[#726D6A]">
           Already have an account?{" "}
           <Link className="text-[#2C2C2C] font-bold hover:underline" to="/login">

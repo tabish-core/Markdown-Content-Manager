@@ -8,21 +8,21 @@ const Login = ({ setUser }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    // Ensure the URL is exactly "/api/users/login"
-    const { data } = await axios.post("/users/login", {
-      email,
-      password,
-    });
-    localStorage.setItem("token", data.token);
-    setUser(data.user);
-    navigate("/");
-  } catch (error) {
-    setError(error.response?.data?.message || "Server error");
-  }
-};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post("/api/users/login", {
+        email,
+        password,
+      });
+      localStorage.setItem("token", data.token);
+      setUser(data);
+      navigate("/");
+    } catch (error) {
+      setError(error.response?.data?.message || "Server error");
+    }
+  };
+
   // Login.jsx (Apply similar logic to Register.jsx)
 return (
   <div className="min-h-[80vh] flex items-center justify-center px-6">

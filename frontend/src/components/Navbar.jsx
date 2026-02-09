@@ -27,7 +27,7 @@ return (
   <nav className="sticky top-0 z-40 w-full bg-[#FDFCF8]/80 backdrop-blur-md border-b border-[#EAE0D5] px-6 py-4">
     <div className="container mx-auto flex items-center justify-between">
       <Link to="/" className="text-xl font-bold tracking-tight text-[#2C2C2C]">
-        Content Markdown<span className="text-[#A8A29E]">.</span>
+        Tabish's Note<span className="text-[#A8A29E]">.</span>
       </Link>
       
       {user && (
