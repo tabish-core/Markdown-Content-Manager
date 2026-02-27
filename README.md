@@ -1,6 +1,6 @@
 # Tabish's Notes
 
-A minimal, full-stack markdown notes app with a warm, Notion-inspired aesthetic. Write, search, and manage your thoughts — cleanly.
+A minimal, full-stack markdown notes app with a warm, Notion-inspired aesthetic. Write, search, and manage your thoughts cleanly.
 
 <br />
 
