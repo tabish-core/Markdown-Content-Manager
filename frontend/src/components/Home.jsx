@@ -35,7 +35,7 @@ const Home = () => {
         ? data.filter(
           (note) =>
             note.title.toLowerCase().includes(search.toLowerCase()) ||
-            note.content.toLowerCase().includes(search.toLowerCase())
+            note.description.toLowerCase().includes(search.toLowerCase())
         )
         : data;
       setNotes(filteredNotes);
@@ -56,7 +56,7 @@ const Home = () => {
   const handleSaveNote = (newNote) => {
     if (editNote) {
       setNotes(
-        notes.map((note) => (note.id === newNote.id ? newNote : note))
+        notes.map((note) => (note._id === newNote._id ? newNote : note))
       );
     } else {
       setNotes([...notes, newNote]);
@@ -75,7 +75,7 @@ const Home = () => {
       await axios.delete(`/api/notes/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setNotes(notes.filter((note) => note.id !== id));
+      setNotes(notes.filter((note) => note._id !== id));
     } catch (err) {
       setError("Failed to delete note");
     }
@@ -114,7 +114,7 @@ const Home = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {notes.map((note) => (
             <div
-              key={note.id}
+              key={note._id}
               className="group bg-white border border-[#EAE0D5] p-6 rounded-[24px] hover:shadow-lg hover:border-[#D6CCC2] transition-all duration-300 flex flex-col h-64"
             >
               <div className="flex-1">
@@ -123,13 +123,13 @@ const Home = () => {
                   {note.title}
                 </h3>
                 <p className="text-[#5E5E5E] line-clamp-3 text-sm leading-relaxed">
-                  {note.content}
+                  {note.description}
                 </p>
               </div>
 
               <div className="mt-4 flex items-center justify-between">
                 <span className="text-[10px] uppercase tracking-widest text-[#A8A29E] font-bold">
-                  {new Date(note.created_at).toLocaleDateString()}
+                  {new Date(note.createdAt).toLocaleDateString()}
                 </span>
 
                 <div className="flex space-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -140,7 +140,7 @@ const Home = () => {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(note.id)}
+                    onClick={() => handleDelete(note._id)}
                     className="text-sm font-semibold text-red-400 hover:text-red-600"
                   >
                     Delete
