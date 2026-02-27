@@ -45,7 +45,7 @@ const Register = ({ setUser }) => {
             type="text"
             value={username}
             onChange={(e) => setusername(e.target.value)}
-            placeholder="username"
+            placeholder="Username"
             className="w-full px-6 py-4 bg-[#FDFCF8] border border-[#EAE0D5] rounded-2xl outline-none focus:ring-2 focus:ring-[#D6CCC2] transition-all placeholder:text-[#A8A29E]"
             required
           />
