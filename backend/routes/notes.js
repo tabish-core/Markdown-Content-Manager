@@ -1,77 +1,62 @@
 import express from "express";
-import { supabase } from "../config/db.js";
-import { auth } from "../middleware/auth.js";
+import Note from "../models/Note.js";
+import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // Get all notes for the logged-in user
-router.get("/", auth, async (req, res) => {
+router.get("/", protect, async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from('notes')
-      .select('*')
-      .eq('user_id', req.user.id);
-
-    if (error) throw error;
-    res.json(data);
+    const notes = await Note.find({ createdBy: req.user._id });
+    res.json(notes);
   } catch (err) {
+    console.error(err);
     res.status(500).send("Server Error");
   }
 });
 
 // Create a note
-router.post("/", auth, async (req, res) => {
+router.post("/", protect, async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from('notes')
-      .insert([
-        {
-          title: req.body.title,
-          content: req.body.content,
-          user_id: req.user.id
-        }
-      ])
-      .select();
-
-    if (error) throw error;
-    res.json(data[0]);
+    const note = await Note.create({
+      title: req.body.title,
+      description: req.body.content,
+      createdBy: req.user._id,
+    });
+    res.json(note);
   } catch (err) {
+    console.error(err);
     res.status(500).send("Server Error");
   }
 });
 
 // Update a note
-router.put("/:id", auth, async (req, res) => {
+router.put("/:id", protect, async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from('notes')
-      .update({
-        title: req.body.title,
-        content: req.body.content
-      })
-      .eq('id', req.params.id)
-      .eq('user_id', req.user.id)
-      .select();
-
-    if (error) throw error;
-    res.json(data[0]);
+    const note = await Note.findOneAndUpdate(
+      { _id: req.params.id, createdBy: req.user._id },
+      { title: req.body.title, description: req.body.content },
+      { new: true }
+    );
+    if (!note) return res.status(404).json({ message: "Note not found" });
+    res.json(note);
   } catch (err) {
+    console.error(err);
     res.status(500).send("Server Error");
   }
 });
 
 // Delete a note
-router.delete("/:id", auth, async (req, res) => {
+router.delete("/:id", protect, async (req, res) => {
   try {
-    const { error } = await supabase
-      .from('notes')
-      .delete()
-      .eq('id', req.params.id)
-      .eq('user_id', req.user.id);
-
-    if (error) throw error;
+    const note = await Note.findOneAndDelete({
+      _id: req.params.id,
+      createdBy: req.user._id,
+    });
+    if (!note) return res.status(404).json({ message: "Note not found" });
     res.json({ msg: "Note removed" });
   } catch (err) {
+    console.error(err);
     res.status(500).send("Server Error");
   }
 });
