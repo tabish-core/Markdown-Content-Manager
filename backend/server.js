@@ -1,35 +1,3 @@
-// import express from "express";
-// import dotenv from "dotenv";
-// import { connectDB } from "./config/db.js";
-// import authRoutes from "./routes/auth.js";
-// import notesRoutes from "./routes/notes.js";
-// import path from "path";
-// dotenv.config();
-
-// const PORT = process.env.PORT || 5000;
-
-// const app = express();
-
-// app.use(express.json());
-
-// app.use("/api/users", authRoutes);
-// app.use("/api/notes", notesRoutes);
-
-// const __dirname = path.resolve();
-
-// if (process.env.NODE_ENV === "production") {
-//   app.use(express.static(path.join(__dirname, "/frontend/dist")));
-//   app.get("/{*splat}", (req, res) => {
-//     res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
-//   });
-// }
-
-// connectDB();
-
-// app.listen(PORT, () => {
-//   console.log(`Server started at port ${PORT}`);
-// });
-
 import dns from "node:dns/promises";
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
@@ -38,13 +6,11 @@ import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/auth.js";
 import notesRoutes from "./routes/notes.js";
-import path from "path";
 import cors from "cors";
 
 dotenv.config();
 
 const app = express();
-const __dirname = path.resolve();
 
 app.use(cors({
   origin: process.env.FRONTEND_URL || "*",
@@ -56,20 +22,15 @@ app.use(express.json());
 app.use("/api/users", authRoutes);
 app.use("/api/notes", notesRoutes);
 
-
-// Production Configuration
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "/frontend/dist")));
-
-  // SPA fallback
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
-  });
-}
+// Health check route (useful for verifying the deployment is alive)
+app.get("/", (req, res) => {
+  res.json({ status: "ok", message: "Markdown Notes API is running." });
+});
 
 connectDB();
 
-if (process.env.NODE_ENV !== 'production') {
+// Only start a local server outside of Vercel (serverless)
+if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
