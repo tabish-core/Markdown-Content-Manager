@@ -6,6 +6,12 @@ import Register from "./components/Register";
 import Home from "./components/Home";
 import axios from "axios";
 
+// In production, point axios at the deployed backend URL.
+// In dev, Vite's proxy handles /api/* → localhost:5000.
+if (import.meta.env.VITE_API_URL) {
+  axios.defaults.baseURL = import.meta.env.VITE_API_URL;
+}
+
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
