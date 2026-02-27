@@ -8,7 +8,7 @@ const NoteModal = ({ isOpen, onClose, note, onSave }) => {
 
   useEffect(() => {
     setTitle(note ? note.title : "");
-    setContent(note ? note.content : "");
+    setContent(note ? note.description : "");
     setError("");
   }, [note]);
 
@@ -25,7 +25,7 @@ const NoteModal = ({ isOpen, onClose, note, onSave }) => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       if (note) {
         const { data } = await axios.put(
-          `/api/notes/${note.id}`,
+          `/api/notes/${note._id}`,
           payload,
           config
         );
