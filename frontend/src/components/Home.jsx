@@ -132,7 +132,7 @@ const Home = () => {
                   {new Date(note.createdAt).toLocaleDateString()}
                 </span>
 
-                <div className="flex space-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="flex space-x-3 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
                   <button
                     onClick={() => handleEdit(note)}
                     className="text-sm font-semibold text-[#726D6A] hover:text-[#1A1A1A]"
